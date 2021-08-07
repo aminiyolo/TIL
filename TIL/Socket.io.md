@@ -68,7 +68,7 @@ const Chat = () => {
   };
 
   return (
-    <div style={{ marginTop: " 100px" }}>
+    <div>
       <form onSubmit={onSubmit}>
         <input onChange={onChange} />
       </form>
