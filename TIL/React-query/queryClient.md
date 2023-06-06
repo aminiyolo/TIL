@@ -1,4 +1,4 @@
-# queryClient // 2023 3월 4일 (Sat)
+# queryClient // 2023년 3월 4일 (Sat)
 
 ```
 const queryClient = new QueryClient({
