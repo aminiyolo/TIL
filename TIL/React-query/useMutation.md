@@ -8,7 +8,7 @@
 const useUpdateUserInfo = () => {
   return useMutation(
     (params) => updateApiCall(params), {
-        onMutate: () => {
+      onMutate: () => {
         console.log("Sending Request...")
       },
 
@@ -21,7 +21,7 @@ const useUpdateUserInfo = () => {
       },
 
       onSettled: () => {
-        console.log("")
+        console.log("Finally done")
       }
     }
   )
