@@ -10,6 +10,22 @@
   - eagerReducer: null => 불필요한 렌더링이 발생하지 않도록 도와줌
   - eagerState: null => 불필요한 렌더링이 발생하지 않도록 도와줌
 
+```
+const last = queue.last;
+if(last === null) {
+  // this is the first update
+  update.next = update;
+} else {
+  const first = last.next;
+  if(first !== null) {
+    // still circular
+    update.next = first;
+  }
+  last.next = update;
+}
+queue.last = update;
+```
+
 - update 객체를 queue에 저장(circular linked list 구조)
 - 불필요한 렌더링이 발생하지 않도록 최적화
   - 현재 컴포넌트의 업데이트로 인해 발생하는 Work 스케쥴링이 없고,
