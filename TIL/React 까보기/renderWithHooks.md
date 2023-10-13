@@ -9,7 +9,7 @@
   - 컴포넌트 상태가 mount, update일때 다음 컴포넌트가 사용할 수 있게 전역변수 초기화 로직도 포함(nextCurrentHook, firstWorkInProgressHook 등은 전역변수 즉, 작업중인 컴포넌트에만 접근 가능한 값. hook주입과 렌더링이 끝나면 값을 null로 초기화하여 다음 컴포넌트가 활용할 수 있도록 준비하는 로직)
   - nextCurrentHook, firstWorkInProgressHook 등을 전역변수로 사용하는 이유는 renderWithHooks 함수를 호출하는 내부에 다른 함수를 호출하는데 해당 함수에서도 해당 변수를 사용 해야하기 때문이다.
 
-### renderWithHooks() -> Component(fiber)와 Hookdmf 연결
+### renderWithHooks() -> Component(fiber)와 Hook 연결
 
 - currentlyRenderingFiber 전역변수에 workInProgress 할당
 - nextCurrentHook 변수가 null이면, null 할당 그렇지 않으면, current.memoizedState 할당
