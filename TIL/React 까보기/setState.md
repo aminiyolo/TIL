@@ -28,7 +28,7 @@ queue.last = update;
 
 - update 객체를 queue에 저장(circular linked list 구조)
 - 불필요한 렌더링이 발생하지 않도록 최적화
-  - 현재 컴포넌트의 업데이트로 인해 발생하는 Work 스케쥴링이 없고,
+  - 현재 컴포넌트의 업데이트로 인 해 발생하는 Work 스케쥴링이 없고,
   - action의 결과값(우리가 setState의 인자로 넣어준)과 현재 상태 값이 같다면,
   - 위의 2가지 조건이 만족하다면 함수를 return 하여 실행 중지
 - 조건을 만족하지 않아 실행 중지가 되지 않는다면, update를 적용하기 위해 Work를 scheduler에 예약 -> scheduleWork(fiber, expirationTime)
@@ -68,3 +68,24 @@ queue.last = update;
   - button을 클릭하면 num의 값은 0 -> 1
   - num이 1이므로 setNum(prev => prev + 1) 호출
   - button tag를 return하기 전에 다시 Test 컴포넌트를 리렌더링. 이와 같이 button tag를 return 전에 다시 리렌더링 하는 상황이 render phase update
+
+### render phase에서 setState
+
+- 이미 idle에서 WORK를 scheduler에게 등록 했으므로, 다시 WORK를 등록할 필요가 없고 최적화할 필요가 없다.
+- render phase에서 setState를 발생시키면 -> render phase update가 추가적으로 발생하지 않을때 까지 컴포넌트를 재호출하고 setState의 인자로 받아온 action 값을 소비하면 됨
+
+### render phase에서의 update 저장
+
+- didScheduleRenderPhaseUpdate의 값 유무로 이전에 추가된 업데이트가 있는지 판별 (boolean type)
+- 계속적으로 추가 업데이트가 발생하는데 업데이트를 소비하기 전에 새로운 업데이트가 발생하므로, 새로 발생한 업데이트를 소비하기 위해서는 이전 추가된 업데이트 목록을 임시 저장소에 보관을 해놔야 한다. 리액트 코드를 확인해보면, renderPhaseUpdates라는 맵 객체에 저장한다.
+- linked list 형태로 renderPhaseUpdates를 저장한다 (새로운 업데이트가 추가될 때마다 renderPhaseUpdates.next 값에 가장 최근 업데이트를 연결)
+
+### render phase에서 update 소비
+
+- renderWithHooks()에서 renderPhaseUpdates에서 저장하고 있는 update를 소비한다.
+- hook 업데이트 구현체에서 render phase update를 소비하기 위해 필요한 변수들의 값을 할당 -> hook 업데이트 구현체를 dispatcher에 주입. ReactCurrentDispatcher.current = HooksDispatcherOnUpdate
+
+  #### update 소비 중에 다시 update 발생하면
+
+  - 컴포넌트 재호출 -> 여기서 다시 update가 발생한다면, didScheduleRenderPhaseUpdate의 값이 true로 됨 (컴포넌트 호출이 완료되면 마지막에 didScheduleRenderPhaseUpdate의 값을 false로 바꿔줌) didScheduleRenderPhaseUpdate의 값이 true이므로 다시 컴포넌트 호출 과정 진행 -> 반복되면 numberOfReRenderes의 변수 값을 +1 씩 해줌 -> 이러한 리렌더는 최대 25회까지만 반복됨 (리액트 코드 내에 최대 리렌더 값을 25로 지정되어 있음)
+    즉, re-render는 최대 25번까지 가능하다.
