@@ -1,7 +1,7 @@
 # create-next-app 없이 구축
 
 1. package.json을 만들기 위해 npm init 실행
-2. Next.js 프로젝트를 실행하는데 필요한 핵심 라이브러리인 React, React-dom, next 설치 (npm i react react-dom next3)
+2. Next.js 프로젝트를 실행하는데 필요한 핵심 라이브러리인 React, React-dom, next 설치 (npm i react react-dom next)
 3. devDependencies에 필요한 패키지 설치 (npm i @types/node @types/react @types/react-dom eslint eslint-config-next typescript --save-dev)
 4. tsconfig.json 작성
 
